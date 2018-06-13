@@ -44,22 +44,13 @@ obj*/
 *.plist
 
 # Specific Source build products
-client.so
-client.so.dbg
-client_srv.so
-client_srv.so.dbg
-server.so
-server.so.dbg
-server_srv.so
-server_srv.so.dbg
-
-client.dll
-server.dll
-
-client.dylib
-client.dylib.dSYM/
-server.dylib
-server.dylib.dSYM/
+shaderapivk.dll
+shaderapivk.so
+shaderapivk.so.dbg
+shaderapivk_srv.so
+shaderapivk_srv.so.dbg
+shaderapivk.dylib
+shaderapivk.dylib.dSYM/
 
 Debug/
 Release/
