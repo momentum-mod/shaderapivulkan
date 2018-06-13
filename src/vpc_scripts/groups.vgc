@@ -67,3 +67,8 @@ $Group "dedicated"
 	"tier1"
 }
 
+$Group "shaderapi"
+{
+	"shaderapivk"
+}
+
