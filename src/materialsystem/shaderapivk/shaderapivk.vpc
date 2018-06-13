@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-//	SHADERDX8.VPC
+//	SHADERAPIVK.VPC
 //
 //	Project Script
 //-----------------------------------------------------------------------------
@@ -56,8 +56,8 @@ $Project "shaderapivk"
 		
 		$Folder "Utility"
 		{
-			"colorformatvk.cpp"
-			"hardwareconfig.cpp"
+			$File "colorformatvk.cpp"
+			$File "hardwareconfig.cpp"
 		}
 		
 		$File "shaderapi_global.cpp"
