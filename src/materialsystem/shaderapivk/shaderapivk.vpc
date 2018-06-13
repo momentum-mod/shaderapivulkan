@@ -38,7 +38,7 @@ $Configuration "Release"
 	}
 }
 
-$Project "shaderapidx9"
+$Project "shaderapivk"
 {
 	$Folder	"Source Files"
 	{
