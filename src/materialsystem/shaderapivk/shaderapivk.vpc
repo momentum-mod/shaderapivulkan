@@ -1,0 +1,73 @@
+//-----------------------------------------------------------------------------
+//	SHADERDX8.VPC
+//
+//	Project Script
+//-----------------------------------------------------------------------------
+
+$Macro SRCDIR		"..\.."
+$Macro OUTBINDIR	"$SRCDIR\..\game\bin"
+$Macro OUTBINNAME	"shaderapivk"
+
+$Include "$SRCDIR\vpc_scripts\source_dll_win32_base.vpc"	[$WIN32||$LINUX]
+
+// Common Configuration
+$Configuration
+{
+	$Compiler
+	{
+		//$AdditionalIncludeDirectories	"$BASE;$SRCDIR\dx9sdk\include;..\"
+		$PreprocessorDefinitions		"$BASE;SHADERAPIVK;SHADER_DLL_EXPORT;PROTECTED_THINGS_ENABLE;strncpy=use_Q_strncpy_instead;_snprintf=use_Q_snprintf_instead"
+
+//		$AdditionalOptions		"/FC"
+	}
+}
+
+$Configuration "Debug"
+{
+	$Linker [$X360]
+	{
+		$AdditionalDependencies		"$BASE d3dx9d.lib xuirund.lib xuirenderd.lib"
+	}
+}
+
+$Configuration "Release"
+{
+	$Linker [$X360]
+	{
+		$AdditionalDependencies		"$BASE d3dx9.lib xuirun.lib xuirender.lib"
+	}
+}
+
+$Project "shaderapivk"
+{
+	$Folder	"Source Files"
+	{
+	}
+
+	$Folder	"Vulkan Header Files"
+	{
+	}
+
+	$Folder	"Public Header Files"
+	{
+		$File	"$SRCDIR\public\shaderapi\ishaderdevice.h"
+		$File	"$SRCDIR\public\shaderapi\ishaderutil.h"
+		$File	"$SRCDIR\public\shaderapi\ishaderapi.h"
+		$File	"$SRCDIR\public\shaderapi\ishaderdynamic.h"
+		$File	"$SRCDIR\public\shaderapi\ishadershadow.h"
+		$File	"$SRCDIR\public\materialsystem\idebugtextureinfo.h"
+		$File	"$SRCDIR\public\materialsystem\ivballoctracker.h"
+		$File	"$SRCDIR\public\materialsystem\shader_vcs_version.h"
+	}
+
+	$Folder	"Header Files"
+	{
+	}
+
+	$Folder	"Link Libraries"
+	{
+		$Lib "bitmap"
+		$Lib "mathlib"
+		$Lib "tier2"
+	}
+}

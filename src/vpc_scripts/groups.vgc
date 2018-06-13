@@ -1,0 +1,69 @@
+//-----------------------------------------------------------------------------
+//	GROUPS.VGC
+//
+//	Group Configurations for all Source(TM) Projects
+//-----------------------------------------------------------------------------
+
+///////////////////////
+// Group definitions //
+///////////////////////
+
+$Group "gamedlls"
+{
+	"client"
+	"server"
+}
+
+$Group "game"
+{
+	"client"
+	"mathlib"
+	"raytrace"
+	"server"
+	"tier1"
+	"vgui_controls"
+    "game_shader_dx9"
+    "GameUI"
+}
+
+$Group "shaders"
+{
+	"game_shader_dx9"
+}
+$Group "ghost_server"
+{
+	"ghost_server"
+}
+$Group "everything"
+{
+	"captioncompiler"
+	"client"
+	"fgdlib"
+	"game_shader_dx9"
+	"glview"
+	"height2normal"
+	"mathlib"
+	"motionmapper"
+	"raytrace"
+	"server"
+	"tgadiff"
+	"tier1"
+	"vbsp"
+	"vgui_controls"
+	"vice"
+	"vrad_dll"
+	"vrad_launcher"
+	"vtf2tga"
+	"vtfdiff"
+	"vvis_dll"
+	"vvis_launcher"
+    "GameUI"
+}
+
+$Group "dedicated"
+{
+	"mathlib"
+	"server"
+	"tier1"
+}
+
