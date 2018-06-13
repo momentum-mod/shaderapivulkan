@@ -66,6 +66,15 @@
     <ClInclude Include="shaderapivk.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="localvktypes.h">
+      <Filter>Headerdateien\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="impl_vulkan.hpp">
+      <Filter>Headerdateien\Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="shaderapibase.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
