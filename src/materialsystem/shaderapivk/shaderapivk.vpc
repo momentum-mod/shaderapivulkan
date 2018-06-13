@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-//	SHADERDX8.VPC
+//	SHADERAPIVK.VPC
 //
 //	Project Script
 //-----------------------------------------------------------------------------
@@ -8,7 +8,7 @@ $Macro SRCDIR		"..\.."
 $Macro OUTBINDIR	"$SRCDIR\..\game\bin"
 $Macro OUTBINNAME	"shaderapivk"
 
-$Include "$SRCDIR\vpc_scripts\source_dll_win32_base.vpc"	[$WIN32||$LINUX]
+$Include "$SRCDIR\vpc_scripts\source_dll_base.vpc"
 
 // Common Configuration
 $Configuration
@@ -42,6 +42,31 @@ $Project "shaderapivk"
 {
 	$Folder	"Source Files"
 	{
+		$Folder "Entry Point"
+		{
+			$File "dllmain.cpp"
+		}
+		
+		$Folder "Resource"
+		{
+			$File "meshbase.cpp"
+			$File "textureheap.cpp"
+			$File "texturevk.cpp"
+		}
+		
+		$Folder "Utility"
+		{
+			$File "colorformatvk.cpp"
+			$File "hardwareconfig.cpp"
+		}
+		
+		$File "shaderapi_global.cpp"
+		$File "shaderapivk.cpp"
+		$File "shaderdevicebase.cpp"
+		$File "shaderdevicevk.cpp"
+		$File "shadershadowvk.cpp"
+		$File "vertexbuffervk.cpp"
+		$File "vertexdecl.cpp"
 	}
 
 	$Folder	"Vulkan Header Files"
@@ -62,6 +87,25 @@ $Project "shaderapivk"
 
 	$Folder	"Header Files"
 	{
+		$Folder "Resource"
+		{
+			$File "meshbase.h"
+			$File "textureheap.h"
+			$File "texturevk.h"
+ 		}
+		$Folder "Utility"
+		{
+			$File "colorformatvk.h"
+			$File "hardwareconfig.h"
+		}
+		
+		$File "shaderapi_global.h"
+		$File "shaderapivk.h"
+		$File "shaderdevicebase.h"
+		$File "shaderdevicevk.h"
+		$File "shadershadowvk.h"
+		$File "vertexbuffervk.h"
+		$File "vertexdecl.h"
 	}
 
 	$Folder	"Link Libraries"

@@ -86,6 +86,11 @@ $Project "serverplugin_empty"
 	"utils\serverplugin_sample\serverplugin_empty.vpc" [$WIN32||$POSIX]
 }
 
+$Project "shaderapivk"
+{
+	"materialsystem\shaderapivk\shaderapivk.vpc"
+}
+
 $Project "tgadiff"
 {
 	"utils\tgadiff\tgadiff.vpc" [$WIN32]

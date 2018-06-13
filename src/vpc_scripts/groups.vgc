@@ -67,3 +67,9 @@ $Group "dedicated"
 	"tier1"
 }
 
+$Group "shaderapi"
+{
+	"tier1"
+	"mathlib"
+	"shaderapivk"
+}
