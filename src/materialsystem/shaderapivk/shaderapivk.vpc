@@ -40,37 +40,6 @@ $Configuration "Release"
 
 $Project "shaderapivk"
 {
-	$Folder	"Source Files"
-	{
-		$Folder "Entry Point"
-		{
-			$File "dllmain.cpp"
-		}
-		
-		$Folder "Resource"
-		{
-			$File "meshbase.cpp"
-			$File "meshvk.cpp"
-			$File "textureheap.cpp"
-			$File "texturevk.cpp"
-		}
-		
-		$Folder "Utility"
-		{
-			$File "colorformatvk.cpp"
-			$File "hardwareconfig.cpp"
-		}
-		
-		$File "shaderapi_global.cpp"
-		$File "shaderapibase.cpp"
-		$File "shaderapivk.cpp"
-		$File "shaderdevicebase.cpp"
-		$File "shaderdevicevk.cpp"
-		$File "shadershadowvk.cpp"
-		$File "vertexbuffervk.cpp"
-		$File "vertexdecl.cpp"
-	}
-
 	$Folder	"Vulkan Header Files"
 	{
 	}
@@ -87,29 +56,33 @@ $Project "shaderapivk"
 		$File	"$SRCDIR\public\materialsystem\shader_vcs_version.h"
 	}
 
-	$Folder	"Header Files"
+	$Folder	"Source Code"
 	{
-		$Folder "Resource"
+		$Folder "App System"
 		{
-			$File "meshbase.h"
-			$File "meshvk.h"
-			$File "textureheap.h"
-			$File "texturevk.h"
+			$File "shaderapivk.h"
+			$File "shaderapivk.cpp"
  		}
-		$Folder "Utility"
+		$Folder "Device / Device Manager"
 		{
-			$File "colorformatvk.h"
-			$File "hardwareconfig.h"
+			$File "shaderdevice.h"
+			$File "shaderdevice.cpp"
+			$File "shaderdevicemgr.h"
+			$File "shaderdevicemgr.cpp"
 		}
-		
-		$File "shaderapi_global.h"
-		$File "shaderapibase.h"
-		$File "shaderapivk.h"
-		$File "shaderdevicebase.h"
-		$File "shaderdevicevk.h"
-		$File "shadershadowvk.h"
-		$File "vertexbuffervk.h"
-		$File "vertexdecl.h"
+		$Folder "Vertex / Index Buffer"
+		{
+			$File "vertexbufferimpl.h"
+			$File "vertexbufferimpl.cpp"
+			$File "indexbufferimpl.h"
+			$File "indexbufferimpl.cpp"
+		}
+		$Folder "Vulkan Callbacks"
+		{
+			$File "vulkanimpl.h"
+			$File "vulkanimpl.cpp"
+		}
+		$File "shaderapi_globals.cpp"
 	}
 
 	$Folder	"Link Libraries"
