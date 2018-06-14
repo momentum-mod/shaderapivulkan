@@ -1,22 +1,20 @@
 #pragma once
 
-#include <shaderapi/ishaderapi.h>
-
-#include "impl_vulkan.hpp"
-
 #include "shaderapi/ishaderapi.h"
 #include "shaderapi_global.h"
-#include "localvktypes.h"
 
-typedef struct _texturedat_s
+#include "vulkan/vulkan.h"
+
+// Colors for PIX graphs
+struct texturedat_t
 {
-	int placeholder;
-}texturedat_t;
+	VkImage image;
+};
 
 //-----------------------------------------------------------------------------
 // The Base implementation of the shader rendering interface
 //-----------------------------------------------------------------------------
-class CShaderAPIBase : public IShaderAPIVK
+class CShaderAPIBase : public IShaderAPI
 {
 public:
 	// constructor, destructor
@@ -40,7 +38,7 @@ public:
 	virtual void ResetRenderState(bool bFullReset = true) = 0;
 
 	// Returns a d3d texture associated with a texture handle
-	virtual texturedat_t* GetD3DTexture(ShaderAPITextureHandle_t hTexture) = 0;
+	virtual texturedat_t* GetVkTexture(ShaderAPITextureHandle_t hTexture) = 0;
 
 	// Queues a non-full reset of render state next BeginFrame.
 	virtual void QueueResetRenderState() = 0;
@@ -49,5 +47,4 @@ public:
 public:
 	virtual void GetCurrentColorCorrection(ShaderColorCorrectionInfo_t* pInfo);
 
-protected:
 };

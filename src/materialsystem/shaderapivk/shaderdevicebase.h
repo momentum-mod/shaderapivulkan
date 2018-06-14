@@ -1,6 +1,6 @@
 #pragma once
 
-#include <materialsystem/ishader>
+#include "shaderapi/IShaderDevice.h"
 
 #include "hardwareconfig.h"
 
@@ -68,27 +68,27 @@ protected:
 
 private:
 	// Reads in the dxsupport.cfg keyvalues
-	KeyValues * ReadDXSupportKeyValues();
+	//KeyValues * ReadDXSupportKeyValues();
 
 	// Reads in ConVars + config variables
-	void LoadConfig(KeyValues *pKeyValues, KeyValues *pConfiguration);
+	//void LoadConfig(KeyValues *pKeyValues, KeyValues *pConfiguration);
 
 	// Loads the hardware caps, for cases in which the D3D caps lie or where we need to augment the caps
-	void LoadHardwareCaps(KeyValues *pGroup, HardwareCaps_t &caps);
+	//void LoadHardwareCaps(KeyValues *pGroup, HardwareCaps_t &caps);
 
 	// Gets the recommended configuration associated with a particular dx level
-	bool GetRecommendedConfigurationInfo(int nAdapter, int nDXLevel, int nVendorID, int nDeviceID, KeyValues *pConfiguration);
+	//bool GetRecommendedConfigurationInfo(int nAdapter, int nDXLevel, int nVendorID, int nDeviceID, KeyValues *pConfiguration);
 
 	// Returns the amount of video memory in bytes for a particular adapter
 	virtual int GetVidMemBytes(int nAdapter) const = 0;
 
 	// Looks for override keyvalues in the dxsupport cfg keyvalues
-	KeyValues *FindDXLevelSpecificConfig(KeyValues *pKeyValues, int nDxLevel);
-	KeyValues *FindDXLevelAndVendorSpecificConfig(KeyValues *pKeyValues, int nDxLevel, int nVendorID);
-	KeyValues *FindCPUSpecificConfig(KeyValues *pKeyValues, int nCPUMhz, bool bAMD);
-	KeyValues *FindMemorySpecificConfig(KeyValues *pKeyValues, int nSystemRamMB);
-	KeyValues *FindVidMemSpecificConfig(KeyValues *pKeyValues, int nVideoRamMB);
-	KeyValues *FindCardSpecificConfig(KeyValues *pKeyValues, int nVendorID, int nDeviceID);
+	//KeyValues *FindDXLevelSpecificConfig(KeyValues *pKeyValues, int nDxLevel);
+	//KeyValues *FindDXLevelAndVendorSpecificConfig(KeyValues *pKeyValues, int nDxLevel, int nVendorID);
+	//KeyValues *FindCPUSpecificConfig(KeyValues *pKeyValues, int nCPUMhz, bool bAMD);
+	//KeyValues *FindMemorySpecificConfig(KeyValues *pKeyValues, int nSystemRamMB);
+	//KeyValues *FindVidMemSpecificConfig(KeyValues *pKeyValues, int nVideoRamMB);
+	//KeyValues *FindCardSpecificConfig(KeyValues *pKeyValues, int nVendorID, int nDeviceID);
 
 protected:
 	// Stores adapter info for all adapters
@@ -162,12 +162,37 @@ protected:
 };
 
 
+inline CShaderDeviceBase::CShaderDeviceBase()
+{
+}
+
+inline CShaderDeviceBase::~CShaderDeviceBase()
+{
+}
+
 //-----------------------------------------------------------------------------
 // Inline methods
 //-----------------------------------------------------------------------------
 inline void* CShaderDeviceBase::GetIPCHWnd()
 {
 	return m_hWndCookie;
+}
+
+inline void CShaderDeviceBase::SendIPCMessage(IPCMessage_t message)
+{
+}
+
+inline void CShaderDeviceBase::InstallWindowHook(void * hWnd)
+{
+}
+
+inline void CShaderDeviceBase::RemoveWindowHook(void * hWnd)
+{
+}
+
+inline int CShaderDeviceBase::FindView(void * hWnd) const
+{
+	return 0;
 }
 
 

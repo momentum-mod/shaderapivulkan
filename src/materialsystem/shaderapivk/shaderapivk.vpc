@@ -50,6 +50,7 @@ $Project "shaderapivk"
 		$Folder "Resource"
 		{
 			$File "meshbase.cpp"
+			$File "meshvk.cpp"
 			$File "textureheap.cpp"
 			$File "texturevk.cpp"
 		}
@@ -61,6 +62,7 @@ $Project "shaderapivk"
 		}
 		
 		$File "shaderapi_global.cpp"
+		$File "shaderapibase.cpp"
 		$File "shaderapivk.cpp"
 		$File "shaderdevicebase.cpp"
 		$File "shaderdevicevk.cpp"
@@ -90,6 +92,7 @@ $Project "shaderapivk"
 		$Folder "Resource"
 		{
 			$File "meshbase.h"
+			$File "meshvk.h"
 			$File "textureheap.h"
 			$File "texturevk.h"
  		}
@@ -100,6 +103,7 @@ $Project "shaderapivk"
 		}
 		
 		$File "shaderapi_global.h"
+		$File "shaderapibase.h"
 		$File "shaderapivk.h"
 		$File "shaderdevicebase.h"
 		$File "shaderdevicevk.h"
@@ -113,5 +117,6 @@ $Project "shaderapivk"
 		$Lib "bitmap"
 		$Lib "mathlib"
 		$Lib "tier2"
+		$Lib "vulkan-1"
 	}
 }
