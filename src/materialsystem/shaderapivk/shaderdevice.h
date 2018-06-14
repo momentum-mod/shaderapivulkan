@@ -67,8 +67,8 @@ public:
 
 	// NOTE: Deprecated!! Use CreateVertexBuffer/CreateIndexBuffer instead
 	// Creates/destroys Mesh
-	virtual IMesh* CreateStaticMesh(VertexFormat_t vertexFormat, const char *pTextureBudgetGroup, IMaterial * pMaterial = NULL) override;
-	virtual void DestroyStaticMesh(IMesh* mesh) override;
+	virtual IMesh* CreateStaticMesh(VertexFormat_t vertexFormat, const char *pTextureBudgetGroup, IMaterial * pMaterial = NULL) override {}
+	virtual void DestroyStaticMesh(IMesh* mesh) override {}
 
 	// Creates/destroys static vertex + index buffers
 	virtual IVertexBuffer *CreateVertexBuffer(ShaderBufferType_t type, VertexFormat_t fmt, int nVertexCount, const char *pBudgetGroup) override;

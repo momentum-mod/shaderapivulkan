@@ -6,7 +6,8 @@
 
 struct MyVkAdapterInfo
 {
-
+	MaterialAdapterInfo_t matdata;
+	VkPhysicalDevice device;
 };
 
 class CShaderDeviceMgr : public IShaderDeviceMgr
@@ -59,6 +60,8 @@ public:
 	virtual void RemoveModeChangeCallback(ShaderModeChangeCallbackFunc_t func) override;
 #pragma endregion
 
+	void InitAdapterInfo();
+
 	VkInstance GetInstance();
 
 private:
@@ -67,3 +70,8 @@ private:
 };
 
 extern CShaderDeviceMgr* g_pShaderDeviceMgr;
+
+inline VkInstance vkinstance()
+{
+	return g_pShaderDeviceMgr->GetInstance();
+}

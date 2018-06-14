@@ -60,15 +60,17 @@ $Project "shaderapivk"
 	{
 		$Folder "App System"
 		{
-			$File "shaderapivk.h"
-			$File "shaderapivk.cpp"
+			$File "shaderdevicemgr.h"
+			$File "shaderdevicemgr.cpp"
  		}
-		$Folder "Device / Device Manager"
+		$Folder "Device / Renderer"
 		{
 			$File "shaderdevice.h"
 			$File "shaderdevice.cpp"
-			$File "shaderdevicemgr.h"
-			$File "shaderdevicemgr.cpp"
+			$File "shaderrender.h"
+			$File "shaderrender.cpp"
+			$File "shaderutil.h"
+			$File "shaderutil.cpp"
 		}
 		$Folder "Vertex / Index Buffer"
 		{

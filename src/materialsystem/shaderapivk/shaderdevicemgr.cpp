@@ -49,7 +49,9 @@ void * CShaderDeviceMgr::QueryInterface(const char * pInterfaceName)
 
 InitReturnVal_t CShaderDeviceMgr::Init()
 {
-	return InitReturnVal_t();
+	InitAdapterInfo();
+
+	return INIT_OK;
 }
 
 void CShaderDeviceMgr::Shutdown()
@@ -64,6 +66,8 @@ int CShaderDeviceMgr::GetAdapterCount() const
 
 void CShaderDeviceMgr::GetAdapterInfo(int nAdapter, MaterialAdapterInfo_t & info) const
 {
+	// index out of range checks are unnessecary :p never should happen
+	info = m_Adapters[nAdapter].matdata;
 }
 
 bool CShaderDeviceMgr::GetRecommendedConfigurationInfo(int nAdapter, int nDXLevel, KeyValues * pConfiguration)
@@ -100,6 +104,38 @@ void CShaderDeviceMgr::AddModeChangeCallback(ShaderModeChangeCallbackFunc_t func
 
 void CShaderDeviceMgr::RemoveModeChangeCallback(ShaderModeChangeCallbackFunc_t func)
 {
+}
+
+void CShaderDeviceMgr::InitAdapterInfo()
+{
+	m_Adapters.RemoveAll();
+
+	uint32_t count = 0;
+	vkEnumeratePhysicalDevices(m_hInstance, &count, nullptr);
+	CUtlVector<VkPhysicalDevice> devices(count, count);
+	vkEnumeratePhysicalDevices(m_hInstance, &count, devices.begin());
+
+	VkPhysicalDeviceProperties properties;
+
+	m_Adapters.SetSize(count);
+
+	for (int i = 0; i < count; i++)
+	{
+		auto& adapter = m_Adapters[i];
+		vkGetPhysicalDeviceProperties(devices[i], &properties);
+
+		memset(&adapter, 0, sizeof(MyVkAdapterInfo));
+
+		adapter.device = devices[i];
+		adapter.matdata.m_DeviceID = properties.deviceID;
+		adapter.matdata.m_nDriverVersionHigh = properties.driverVersion >> 16;
+		adapter.matdata.m_nDriverVersionLow = properties.driverVersion & 0xFFFF;
+		adapter.matdata.m_nDXSupportLevel = adapter.matdata.m_nMaxDXSupportLevel = 0;
+		adapter.matdata.m_VendorID = properties.vendorID;
+		strcpy(adapter.matdata.m_pDriverName, "(not retrieved)");
+		adapter.matdata.m_SubSysID = -1;
+
+	}
 }
 
 VkInstance CShaderDeviceMgr::GetInstance()
