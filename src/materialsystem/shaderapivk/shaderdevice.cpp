@@ -1,5 +1,13 @@
 #include "shaderdevice.h"
 
+CShaderDevice::CShaderDevice(DeviceCreationInfo_t& info)
+{
+}
+
+CShaderDevice::~CShaderDevice()
+{
+}
+
 void CShaderDevice::ReleaseResources()
 {
 }
@@ -180,4 +188,8 @@ void CShaderDevice::HandleThreadEvent(uint32 threadEvent)
 char * CShaderDevice::GetDisplayDeviceName()
 {
 	return nullptr;
+}
+
+void CShaderDevice::ShutdownDevice()
+{
 }

@@ -1,4 +1,6 @@
 #include "shaderdevicemgr.h"
+#include "shaderdevice.h"
+#include "shaderapivk.h"
 
 bool CShaderDeviceMgr::Connect(CreateInterfaceFn factory)
 {
@@ -44,6 +46,8 @@ void CShaderDeviceMgr::Disconnect()
 
 void * CShaderDeviceMgr::QueryInterface(const char * pInterfaceName)
 {
+	if (!Q_stricmp(pInterfaceName, SHADER_DEVICE_MGR_INTERFACE_VERSION))
+		return this;
 	return nullptr;
 }
 
@@ -56,7 +60,11 @@ InitReturnVal_t CShaderDeviceMgr::Init()
 
 void CShaderDeviceMgr::Shutdown()
 {
-	
+	if (g_pShaderDevice)
+	{
+		g_pShaderDevice->ShutdownDevice();
+		g_pShaderDevice = nullptr;
+	}
 }
 
 int CShaderDeviceMgr::GetAdapterCount() const
@@ -72,11 +80,12 @@ void CShaderDeviceMgr::GetAdapterInfo(int nAdapter, MaterialAdapterInfo_t & info
 
 bool CShaderDeviceMgr::GetRecommendedConfigurationInfo(int nAdapter, int nDXLevel, KeyValues * pConfiguration)
 {
-	return false;
+	return true;
 }
 
 int CShaderDeviceMgr::GetModeCount(int nAdapter) const
 {
+	auto adapter = m_Adapters[nAdapter];
 	return 0;
 }
 
@@ -86,16 +95,33 @@ void CShaderDeviceMgr::GetModeInfo(ShaderDisplayMode_t * pInfo, int nAdapter, in
 
 void CShaderDeviceMgr::GetCurrentModeInfo(ShaderDisplayMode_t * pInfo, int nAdapter) const
 {
+	VkPhysicalDevice device = m_Adapters[nAdapter].device;
+
+
 }
 
 bool CShaderDeviceMgr::SetAdapter(int nAdapter, int nFlags)
 {
-	return false;
+	//deprecated
+	return true;
 }
 
 CreateInterfaceFn CShaderDeviceMgr::SetMode(void * hWnd, int nAdapter, const ShaderDeviceInfo_t & mode)
 {
-	return CreateInterfaceFn();
+	if (g_pShaderDevice)
+	{
+		g_pShaderDevice->ShutdownDevice();
+		delete g_pShaderDevice;
+		g_pShaderDevice = nullptr;
+	}
+
+	DeviceCreationInfo_t info;
+	info.device = m_Adapters[nAdapter].device;
+	g_pShaderDevice = new CShaderDevice(info);
+
+	
+
+	return MyCreateInterface;
 }
 
 void CShaderDeviceMgr::AddModeChangeCallback(ShaderModeChangeCallbackFunc_t func)
@@ -104,6 +130,11 @@ void CShaderDeviceMgr::AddModeChangeCallback(ShaderModeChangeCallbackFunc_t func
 
 void CShaderDeviceMgr::RemoveModeChangeCallback(ShaderModeChangeCallbackFunc_t func)
 {
+}
+
+VkPhysicalDevice CShaderDeviceMgr::GetAdapter(int nIndex) const
+{
+	return m_Adapters[nIndex].device;
 }
 
 void CShaderDeviceMgr::InitAdapterInfo()
@@ -136,9 +167,25 @@ void CShaderDeviceMgr::InitAdapterInfo()
 		adapter.matdata.m_SubSysID = -1;
 
 	}
+
 }
 
 VkInstance CShaderDeviceMgr::GetInstance()
 {
 	return m_hInstance;
+}
+
+void * CShaderDeviceMgr::MyCreateInterface(const char * pInterfaceName, int * pReturnCode)
+{
+	if (pReturnCode)
+		*pReturnCode = IFACE_OK;
+	if (!Q_stricmp(pInterfaceName, SHADER_DEVICE_INTERFACE_VERSION))
+		return dynamic_cast< IShaderDevice* >(g_pShaderDevice);
+	if (!Q_stricmp(pInterfaceName, SHADERAPI_INTERFACE_VERSION))
+		return dynamic_cast< IShaderAPI* >(g_pShaderAPI);
+	//if (!Q_stricmp(pInterfaceName, SHADERSHADOW_INTERFACE_VERSION))
+	//	return static_cast< IShaderShadow* >(g_pShaderShadow);
+	if (pReturnCode)
+		*pReturnCode = IFACE_FAILED;
+	return nullptr;
 }

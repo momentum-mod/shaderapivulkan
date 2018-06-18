@@ -65,6 +65,8 @@ $Project "shaderapivk"
  		}
 		$Folder "Device / Renderer"
 		{
+			$File "shaderapivk.h"
+			$File "shaderapivk.cpp"
 			$File "shaderdevice.h"
 			$File "shaderdevice.cpp"
 			$File "shaderrender.h"

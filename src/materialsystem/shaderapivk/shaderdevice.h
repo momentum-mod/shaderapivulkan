@@ -2,9 +2,22 @@
 
 #include "shaderapi/IShaderDevice.h"
 
+#include <vulkan/vulkan.h>
+
+struct DeviceCreationInfo_t
+{
+	VkPhysicalDevice device;
+	int width;
+	int height;
+	bool fullscreen;
+};
+
 class CShaderDevice : public IShaderDevice
 {
 public:
+	CShaderDevice(DeviceCreationInfo_t& info);
+	~CShaderDevice();
+
 	// Releases/reloads resources when other apps want some memory
 	virtual void ReleaseResources() override;
 	virtual void ReacquireResources() override;
@@ -88,6 +101,7 @@ public:
 
 	virtual char *GetDisplayDeviceName() override;
 
+	void ShutdownDevice();
 };
 
 extern CShaderDevice* g_pShaderDevice;
