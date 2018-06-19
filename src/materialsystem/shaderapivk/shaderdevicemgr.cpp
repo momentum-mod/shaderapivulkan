@@ -115,11 +115,9 @@ CreateInterfaceFn CShaderDeviceMgr::SetMode(void * hWnd, int nAdapter, const Sha
 		g_pShaderDevice = nullptr;
 	}
 
-	DeviceCreationInfo_t info;
-	info.device = m_Adapters[nAdapter].device;
-	g_pShaderDevice = new CShaderDevice(info);
+	g_pShaderDevice = new CShaderDevice(hWnd, m_Adapters[nAdapter], mode);
 
-	
+	m_Mode = mode;
 
 	return MyCreateInterface;
 }
@@ -153,9 +151,10 @@ void CShaderDeviceMgr::InitAdapterInfo()
 	for (int i = 0; i < count; i++)
 	{
 		auto& adapter = m_Adapters[i];
-		vkGetPhysicalDeviceProperties(devices[i], &properties);
-
 		memset(&adapter, 0, sizeof(MyVkAdapterInfo));
+
+		vkGetPhysicalDeviceProperties(devices[i], &adapter.props);
+		auto& properties = adapter.props;
 
 		adapter.device = devices[i];
 		adapter.matdata.m_DeviceID = properties.deviceID;

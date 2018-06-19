@@ -99,6 +99,7 @@ struct MyHardwareCaps
 struct MyVkAdapterInfo
 {
 	MaterialAdapterInfo_t matdata;
+	VkPhysicalDeviceProperties props;
 	MyHardwareCaps caps;
 	VkPhysicalDevice device;
 };
@@ -162,6 +163,7 @@ public:
 private:
 	static void* MyCreateInterface(const char* pInterfaceName, int* pReturnCode);
 
+	ShaderDeviceInfo_t m_Mode;
 	VkInstance m_hInstance;
 	CUtlVector<MyVkAdapterInfo> m_Adapters;
 };

@@ -4,18 +4,12 @@
 
 #include <vulkan/vulkan.h>
 
-struct DeviceCreationInfo_t
-{
-	VkPhysicalDevice device;
-	int width;
-	int height;
-	bool fullscreen;
-};
+struct MyVkAdapterInfo;
 
 class CShaderDevice : public IShaderDevice
 {
 public:
-	CShaderDevice(DeviceCreationInfo_t& info);
+	CShaderDevice(void* hWnd, MyVkAdapterInfo& adapterInfo, const ShaderDeviceInfo_t& creationInfo);
 	~CShaderDevice();
 
 	// Releases/reloads resources when other apps want some memory
@@ -102,6 +96,12 @@ public:
 	virtual char *GetDisplayDeviceName() override;
 
 	void ShutdownDevice();
+
+	VkDevice GetDevice();
+
+private:
+	VkDevice m_Device;
+	VkQueue m_Queue;
 };
 
 extern CShaderDevice* g_pShaderDevice;

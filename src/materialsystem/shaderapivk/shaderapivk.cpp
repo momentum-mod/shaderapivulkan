@@ -446,6 +446,10 @@ void CShaderAPI::SetHeightClipMode(MaterialHeightClipMode_t heightClipMode)
 {
 }
 
+void CShaderAPI::SetHeightClipMode(MaterialHeightClipMode_t heightClipMode)
+{
+}
+
 void CShaderAPI::SetClipPlane(int index, const float * pPlane)
 {
 }

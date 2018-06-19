@@ -1,7 +1,68 @@
 #include "shaderdevice.h"
+#include "vulkanimpl.h"
+#include "shaderdevicemgr.h"
 
-CShaderDevice::CShaderDevice(DeviceCreationInfo_t& info)
+void GetQueueFamily(int& queueFamily, VkPhysicalDevice device)
 {
+	uint32_t queueFamilyCount = 0;
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+	CUtlVector<VkQueueFamilyProperties> queueFamilies;
+	queueFamilies.SetSize(queueFamilyCount);
+	vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.begin());
+
+	queueFamily = -1;
+	for (auto& family : queueFamilies)
+	{
+		if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT & family.queueCount > queueFamily)
+			queueFamily = family.queueCount;
+	}
+}
+
+CShaderDevice::CShaderDevice(void* hWnd, MyVkAdapterInfo & adapterInfo, const ShaderDeviceInfo_t & creationInfo)
+{
+	int queueFamily;
+	GetQueueFamily(queueFamily, adapterInfo.device);
+
+	VkPhysicalDeviceFeatures features;
+	vkGetPhysicalDeviceFeatures(adapterInfo.device, &features);
+
+	float queuePriority = 1.f;
+	VkDeviceQueueCreateInfo queueCreateInfo = 
+	{
+		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+		nullptr,
+		0,
+		queueFamily,
+		1,
+		&queuePriority
+	};
+	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+	queueCreateInfo.queueFamilyIndex = queueFamily;
+	queueCreateInfo.queueCount = 1;
+
+	VkDeviceCreateInfo createInfo =
+	{
+		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+		nullptr,
+		0,
+		1,
+		&queueCreateInfo,
+		0,
+		nullptr,
+		0,
+		nullptr,
+		&features
+	};
+
+	VkResult result = vkCreateDevice(adapterInfo.device, &createInfo, g_pAllocCallbacks, &m_Device);
+
+	if (result != VK_SUCCESS)
+	{
+
+	}
+
+	vkGetDeviceQueue(m_Device, 0, 0, &m_Queue);
 }
 
 CShaderDevice::~CShaderDevice()
@@ -187,9 +248,15 @@ void CShaderDevice::HandleThreadEvent(uint32 threadEvent)
 
 char * CShaderDevice::GetDisplayDeviceName()
 {
-	return nullptr;
+	return "(unspecified)";
 }
 
 void CShaderDevice::ShutdownDevice()
 {
+	vkDestroyDevice(m_Device, g_pAllocCallbacks);
+}
+
+VkDevice CShaderDevice::GetDevice()
+{
+	return m_Device;
 }

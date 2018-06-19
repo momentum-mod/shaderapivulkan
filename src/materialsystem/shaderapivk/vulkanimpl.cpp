@@ -4,7 +4,7 @@
 
 void* VKAPI_PTR myVk_OnAlloc(void* pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
 {
-	return MemAlloc_Alloc(size);
+	return MemAlloc_AllocAligned(size, alignment);
 }
 
 void* VKAPI_PTR myVk_OnRealloc(void* pUserData, void* pOriginal, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
@@ -36,3 +36,20 @@ VkAllocationCallbacks g_AllocCallbacks
 };
 
 VkAllocationCallbacks* g_pAllocCallbacks = &g_AllocCallbacks;
+
+uint32_t numValidationLayers = 0;
+const char* const * validationLayers = nullptr;
+
+const char * const * GetValidationLayers()
+{
+	return nullptr;
+}
+
+uint32_t GetValidationLayerCount()
+{
+	return uint32_t();
+}
+
+void InitValidationLayers()
+{
+}
