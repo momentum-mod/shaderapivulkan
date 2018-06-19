@@ -14,7 +14,7 @@ void GetQueueFamily(int& queueFamily, VkPhysicalDevice device)
 	queueFamily = -1;
 	for (auto& family : queueFamilies)
 	{
-		if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT & family.queueCount > queueFamily)
+		if (family.queueFlags & VK_QUEUE_GRAPHICS_BIT && family.queueCount > queueFamily)
 			queueFamily = family.queueCount;
 	}
 }
@@ -37,9 +37,6 @@ CShaderDevice::CShaderDevice(void* hWnd, MyVkAdapterInfo & adapterInfo, const Sh
 		1,
 		&queuePriority
 	};
-	queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-	queueCreateInfo.queueFamilyIndex = queueFamily;
-	queueCreateInfo.queueCount = 1;
 
 	VkDeviceCreateInfo createInfo =
 	{
