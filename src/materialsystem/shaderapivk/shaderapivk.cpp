@@ -618,6 +618,7 @@ void CShaderAPI::SetPSNearAndFarZ(int pshReg)
 
 void CShaderAPI::EnableDebugTextureList(bool bEnable)
 {
+    m_bEnableDebugTextureList = bEnable;
 }
 
 void CShaderAPI::EnableGetAllTextures(bool bEnable)
@@ -626,18 +627,23 @@ void CShaderAPI::EnableGetAllTextures(bool bEnable)
 
 KeyValues* CShaderAPI::GetDebugTextureList()
 {
+    return m_pDebugTextureList;
 }
 
 int CShaderAPI::GetTextureMemoryUsed(TextureMemoryType eTextureMemory)
 {
 }
 
-bool CShaderAPI::IsDebugTextureListFresh(int numFramesAllowed)
+bool CShaderAPI::IsDebugTextureListFresh(int numFramesAllowed /* = 1 */)
 {
+    return (m_nDebugDataExportFrame <= m_CurrentFrame) && (m_nDebugDataExportFrame >= m_CurrentFrame - numFramesAllowed);
 }
 
 bool CShaderAPI::SetDebugTextureRendering(bool bEnable)
 {
+    bool bVal = m_bDebugTexturesRendering;
+    m_bDebugTexturesRendering = bEnable;
+    return bVal;
 }
 
 

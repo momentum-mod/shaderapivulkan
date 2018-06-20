@@ -656,6 +656,21 @@ public:
     // used during a frame. Returns the old state of debug texture rendering flag to use
     // it for restoring the mode.
     bool SetDebugTextureRendering(bool bEnable) override;
+
+
+private:
+
+    // The current frame
+    int m_CurrentFrame;
+
+    bool m_bEnableDebugTextureList;
+    bool m_bDebugGetAllTextures;
+    bool m_bDebugTexturesRendering;
+    KeyValues *m_pDebugTextureList;
+    int m_nTextureMemoryUsedLastFrame, m_nTextureMemoryUsedTotal;
+    int m_nTextureMemoryUsedPicMip1, m_nTextureMemoryUsedPicMip2;
+    int m_nDebugDataExportFrame;
+
 };
 
 extern CShaderAPI* g_pShaderAPI;
