@@ -61,6 +61,7 @@ $Project "shaderapivk"
  		}
 		$Folder "Device / Renderer"
 		{
+            $File "shaderapivk_global.h"
 			$File "shaderapivk.h"
 			$File "shaderapivk.cpp"
 			$File "shaderdevice.h"
@@ -80,7 +81,7 @@ $Project "shaderapivk"
 			$File "vulkanimpl.h"
 			$File "vulkanimpl.cpp"
 		}
-		$File "shaderapi_globals.cpp"
+        $File "shaderapi_global.h"
 	}
 
 	$Folder	"Link Libraries"

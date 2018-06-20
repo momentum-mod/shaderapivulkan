@@ -107,6 +107,9 @@ struct MyVkAdapterInfo
 class CShaderDeviceMgr : public IShaderDeviceMgr
 {
 public:
+    CShaderDeviceMgr();
+    ~CShaderDeviceMgr();
+
 #pragma region IAppSystem
 	// Here's where the app systems get to learn about each other 
 	virtual bool Connect(CreateInterfaceFn factory) override;

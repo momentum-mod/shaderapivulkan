@@ -1,6 +1,6 @@
 #include "vulkanimpl.h"
 
-#include "memalloc.h"
+#include "tier0/memdbgon.h"
 
 void* VKAPI_PTR myVk_OnAlloc(void* pUserData, size_t size, size_t alignment, VkSystemAllocationScope allocationScope)
 {

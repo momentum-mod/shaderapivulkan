@@ -2,6 +2,13 @@
 #include "vulkanimpl.h"
 #include "shaderdevicemgr.h"
 
+
+static CShaderDevice g_ShaderDeviceVk;
+CShaderDevice *g_pShaderDevice = &g_ShaderDeviceVk;
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CShaderDevice, IShaderDevice,
+                                  SHADER_DEVICE_INTERFACE_VERSION, g_ShaderDeviceVk)
+
+
 void GetQueueFamily(int& queueFamily, VkPhysicalDevice device)
 {
 	uint32_t queueFamilyCount = 0;
@@ -19,51 +26,57 @@ void GetQueueFamily(int& queueFamily, VkPhysicalDevice device)
 	}
 }
 
-CShaderDevice::CShaderDevice(void* hWnd, MyVkAdapterInfo & adapterInfo, const ShaderDeviceInfo_t & creationInfo)
+CShaderDevice::CShaderDevice()
 {
-	int queueFamily;
-	GetQueueFamily(queueFamily, adapterInfo.device);
-
-	VkPhysicalDeviceFeatures features;
-	vkGetPhysicalDeviceFeatures(adapterInfo.device, &features);
-
-	float queuePriority = 1.f;
-	VkDeviceQueueCreateInfo queueCreateInfo = 
-	{
-		VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-		nullptr,
-		0,
-		queueFamily,
-		1,
-		&queuePriority
-	};
-
-	VkDeviceCreateInfo createInfo =
-	{
-		VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		nullptr,
-		0,
-		1,
-		&queueCreateInfo,
-		0,
-		nullptr,
-		0,
-		nullptr,
-		&features
-	};
-
-	VkResult result = vkCreateDevice(adapterInfo.device, &createInfo, g_pAllocCallbacks, &m_Device);
-
-	if (result != VK_SUCCESS)
-	{
-
-	}
-
-	vkGetDeviceQueue(m_Device, 0, 0, &m_Queue);
+    m_Device = VK_NULL_HANDLE;
+    m_Queue = VK_NULL_HANDLE;
 }
 
 CShaderDevice::~CShaderDevice()
 {
+}
+
+void CShaderDevice::InitDevice(void* hWnd, MyVkAdapterInfo& adapterInfo, const ShaderDeviceInfo_t& creationInfo)
+{
+    int queueFamily;
+    GetQueueFamily(queueFamily, adapterInfo.device);
+
+    VkPhysicalDeviceFeatures features;
+    vkGetPhysicalDeviceFeatures(adapterInfo.device, &features);
+
+    float queuePriority = 1.f;
+    VkDeviceQueueCreateInfo queueCreateInfo =
+    {
+        VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
+        nullptr,
+        0,
+        queueFamily,
+        1,
+        &queuePriority
+    };
+
+    VkDeviceCreateInfo createInfo =
+    {
+        VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
+        nullptr,
+        0,
+        1,
+        &queueCreateInfo,
+        0,
+        nullptr,
+        0,
+        nullptr,
+        &features
+    };
+
+    VkResult result = vkCreateDevice(adapterInfo.device, &createInfo, g_pAllocCallbacks, &m_Device);
+
+    if (result != VK_SUCCESS)
+    {
+
+    }
+
+    vkGetDeviceQueue(m_Device, 0, 0, &m_Queue);
 }
 
 void CShaderDevice::ReleaseResources()

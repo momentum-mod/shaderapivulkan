@@ -1,13 +1,116 @@
 #include "shaderdevicemgr.h"
 #include "shaderdevice.h"
 #include "shaderapivk.h"
+#include <tier2/tier2.h>
+#include "shaderapi/ishaderutil.h"
+
+
+//-----------------------------------------------------------------------------
+// Globals
+//-----------------------------------------------------------------------------
+IShaderUtil* g_pShaderUtil;		// The main shader utility interface
+static CShaderDeviceMgr g_ShaderDeviceMgrVk;
+CShaderDeviceMgr* g_pShaderDeviceMgr = &g_ShaderDeviceMgrVk;
+
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CShaderDeviceMgr, IShaderDeviceMgr, SHADER_DEVICE_MGR_INTERFACE_VERSION, g_ShaderDeviceMgrVk);
+
+
+//-----------------------------------------------------------------------------
+// FIXME: Hack related to setting command-line values for convars. Remove!!!
+//-----------------------------------------------------------------------------
+class CShaderAPIConVarAccessor : public IConCommandBaseAccessor
+{
+public:
+    virtual bool RegisterConCommandBase(ConCommandBase *pCommand)
+    {
+        // Link to engine's list instead
+        g_pCVar->RegisterConCommand(pCommand);
+
+        char const *pValue = g_pCVar->GetCommandLineValue(pCommand->GetName());
+        if (pValue && !pCommand->IsCommand())
+        {
+            ((ConVar *) pCommand)->SetValue(pValue);
+        }
+        return true;
+    }
+};
+
+static void InitShaderAPICVars()
+{
+    static CShaderAPIConVarAccessor g_ConVarAccessor;
+    if (g_pCVar)
+    {
+        ConVar_Register(0, &g_ConVarAccessor);
+    }
+}
+
+//-----------------------------------------------------------------------------
+// Factory used to get at internal interfaces (used by shaderapi + shader dlls)
+//-----------------------------------------------------------------------------
+static CreateInterfaceFn s_TempFactory;
+void *ShaderDeviceFactory(const char *pName, int *pReturnCode)
+{
+    if (pReturnCode)
+    {
+        *pReturnCode = IFACE_OK;
+    }
+
+    void *pInterface = s_TempFactory(pName, pReturnCode);
+    if (pInterface)
+        return pInterface;
+
+    pInterface = Sys_GetFactoryThis()(pName, pReturnCode);
+    if (pInterface)
+        return pInterface;
+
+    if (pReturnCode)
+    {
+        *pReturnCode = IFACE_FAILED;
+    }
+    return nullptr;
+}
+
+
+CShaderDeviceMgr::CShaderDeviceMgr()
+{
+    m_hInstance = VK_NULL_HANDLE;
+}
+
+CShaderDeviceMgr::~CShaderDeviceMgr()
+{
+}
 
 bool CShaderDeviceMgr::Connect(CreateInterfaceFn factory)
 {
+    Assert(!g_pShaderDeviceMgr);
 
+    s_TempFactory = factory;
+
+    // Connection/convar registration
+    CreateInterfaceFn actualFactory = ShaderDeviceFactory;
+    ConnectTier1Libraries(&actualFactory, 1);
+    InitShaderAPICVars();
+    ConnectTier2Libraries(&actualFactory, 1);
+    // ShaderUtil is actually defined in CMaterialSystem
+    g_pShaderUtil = static_cast<IShaderUtil*>(ShaderDeviceFactory(SHADER_UTIL_INTERFACE_VERSION, nullptr));
+    g_pShaderDeviceMgr = this;
+
+    s_TempFactory = nullptr;
+
+    if (!g_pShaderUtil || !g_pFullFileSystem || !g_pShaderDeviceMgr)
+    {
+        Warning("ShaderAPIDx10 was unable to access the required interfaces!\n");
+        return false;
+    }
+
+    // NOTE! : Overbright is 1.0 so that Hammer will work properly with the white bumped and unbumped lightmaps.
+    MathLib_Init(2.2f, 2.2f, 0.0f, 2.0f);
+
+
+    // Initialize Vulkan
 	uint32_t count;
 	vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr); //get number of extensions
-	CUtlVector<VkExtensionProperties> fextensions(count);
+	CUtlVector<VkExtensionProperties> fextensions(count, count);
 	vkEnumerateInstanceExtensionProperties(nullptr, &count, fextensions.begin()); //populate buffer
 	CUtlVector<const char*> extensions;
 	for (auto & extension : fextensions) {
@@ -74,7 +177,7 @@ int CShaderDeviceMgr::GetAdapterCount() const
 
 void CShaderDeviceMgr::GetAdapterInfo(int nAdapter, MaterialAdapterInfo_t & info) const
 {
-	// index out of range checks are unnessecary :p never should happen
+	// index out of range checks are unnecessary :p never should happen
 	info = m_Adapters[nAdapter].matdata;
 }
 
@@ -111,11 +214,9 @@ CreateInterfaceFn CShaderDeviceMgr::SetMode(void * hWnd, int nAdapter, const Sha
 	if (g_pShaderDevice)
 	{
 		g_pShaderDevice->ShutdownDevice();
-		delete g_pShaderDevice;
-		g_pShaderDevice = nullptr;
 	}
 
-	g_pShaderDevice = new CShaderDevice(hWnd, m_Adapters[nAdapter], mode);
+	g_pShaderDevice->InitDevice(hWnd, m_Adapters[nAdapter], mode);
 
 	m_Mode = mode;
 

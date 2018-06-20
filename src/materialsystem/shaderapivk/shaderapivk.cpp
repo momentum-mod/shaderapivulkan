@@ -1,4 +1,14 @@
 #include "shaderapivk.h"
+#include "shaderapi_global.h"
+#include "shaderapivk_global.h"
+#include "shaderapi/ishaderutil.h"
+
+static CShaderAPI g_ShaderAPIVk;
+CShaderAPI *g_pShaderAPI = &g_ShaderAPIVk;
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CShaderAPI, IShaderAPI, SHADERAPI_INTERFACE_VERSION, g_ShaderAPIVk);
+
+EXPOSE_SINGLE_INTERFACE_GLOBALVAR(CShaderAPI, IDebugTextureInfo,
+                                  DEBUG_TEXTURE_INFO_VERSION, g_ShaderAPIVk)
 
 CShaderAPI::CShaderAPI()
 {
@@ -275,6 +285,362 @@ void CShaderAPI::UnlockRect(ShaderAPITextureHandle_t texHandle, int mipmap)
 {
 }
 
+double CShaderAPI::CurrentTime() const
+{
+    // FIXME: Return game time instead of real time!
+    // Or eliminate this altogether and put it into a material var
+    // (this is used by vertex modifiers in shader code at the moment)
+    return Plat_FloatTime();
+}
+
+void CShaderAPI::GetLightmapDimensions(int* w, int* h)
+{
+}
+
+MaterialFogMode_t CShaderAPI::GetSceneFogMode()
+{
+}
+
+void CShaderAPI::MatrixMode(MaterialMatrixMode_t matrixMode)
+{
+}
+
+void CShaderAPI::PushMatrix()
+{
+}
+
+void CShaderAPI::PopMatrix()
+{
+}
+
+void CShaderAPI::LoadMatrix(float* m)
+{
+}
+
+void CShaderAPI::MultMatrix(float* m)
+{
+}
+
+void CShaderAPI::MultMatrixLocal(float* m)
+{
+}
+
+void CShaderAPI::GetMatrix(MaterialMatrixMode_t matrixMode, float* dst)
+{
+}
+
+void CShaderAPI::LoadIdentity()
+{
+}
+
+void CShaderAPI::LoadCameraToWorld()
+{
+}
+
+void CShaderAPI::Ortho(double left, double right, double bottom, double top, double zNear, double zFar)
+{
+}
+
+void CShaderAPI::PerspectiveX(double fovx, double aspect, double zNear, double zFar)
+{
+}
+
+void CShaderAPI::PickMatrix(int x, int y, int width, int height)
+{
+}
+
+void CShaderAPI::Rotate(float angle, float x, float y, float z)
+{
+}
+
+void CShaderAPI::Translate(float x, float y, float z)
+{
+}
+
+void CShaderAPI::Scale(float x, float y, float z)
+{
+}
+
+void CShaderAPI::ScaleXY(float x, float y)
+{
+}
+
+void CShaderAPI::Color3f(float r, float g, float b)
+{
+}
+
+void CShaderAPI::Color3fv(float const* pColor)
+{
+}
+
+void CShaderAPI::Color4f(float r, float g, float b, float a)
+{
+}
+
+void CShaderAPI::Color4fv(float const* pColor)
+{
+}
+
+void CShaderAPI::Color3ub(unsigned char r, unsigned char g, unsigned char b)
+{
+}
+
+void CShaderAPI::Color3ubv(unsigned char const* pColor)
+{
+}
+
+void CShaderAPI::Color4ub(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+}
+
+void CShaderAPI::Color4ubv(unsigned char const* pColor)
+{
+}
+
+void CShaderAPI::SetVertexShaderConstant(int var, float const* pVec, int numConst, bool bForce)
+{
+}
+
+void CShaderAPI::SetPixelShaderConstant(int var, float const* pVec, int numConst, bool bForce)
+{
+}
+
+void CShaderAPI::SetDefaultState()
+{
+}
+
+void CShaderAPI::GetWorldSpaceCameraPosition(float* pPos) const
+{
+}
+
+int CShaderAPI::GetCurrentNumBones() const
+{
+}
+
+int CShaderAPI::GetCurrentLightCombo() const
+{
+}
+
+MaterialFogMode_t CShaderAPI::GetCurrentFogType() const
+{
+}
+
+void CShaderAPI::SetTextureTransformDimension(TextureStage_t textureStage, int dimension, bool projected)
+{
+}
+
+void CShaderAPI::DisableTextureTransform(TextureStage_t textureStage)
+{
+}
+
+void CShaderAPI::SetBumpEnvMatrix(TextureStage_t textureStage, float m00, float m01, float m10, float m11)
+{
+}
+
+void CShaderAPI::SetVertexShaderIndex(int vshIndex)
+{
+}
+
+void CShaderAPI::SetPixelShaderIndex(int pshIndex)
+{
+}
+
+void CShaderAPI::GetBackBufferDimensions(int& width, int& height) const
+{
+}
+
+int CShaderAPI::GetMaxLights() const
+{
+}
+
+const LightDesc_t& CShaderAPI::GetLight(int lightNum) const
+{
+}
+
+void CShaderAPI::SetPixelShaderFogParams(int reg)
+{
+}
+
+void CShaderAPI::SetVertexShaderStateAmbientLightCube()
+{
+}
+
+void CShaderAPI::SetPixelShaderStateAmbientLightCube(int pshReg, bool bForceToBlack)
+{
+}
+
+void CShaderAPI::CommitPixelShaderLighting(int pshReg)
+{
+}
+
+CMeshBuilder* CShaderAPI::GetVertexModifyBuilder()
+{
+}
+
+bool CShaderAPI::InFlashlightMode() const
+{
+    return ShaderUtil()->InFlashlightMode();
+}
+
+const FlashlightState_t& CShaderAPI::GetFlashlightState(VMatrix& worldToTexture) const
+{
+}
+
+bool CShaderAPI::InEditorMode() const
+{
+    return ShaderUtil()->InEditorMode();
+}
+
+MorphFormat_t CShaderAPI::GetBoundMorphFormat()
+{
+    return ShaderUtil()->GetBoundMorphFormat();
+}
+
+void CShaderAPI::BindStandardTexture(Sampler_t sampler, StandardTextureId_t id)
+{
+}
+
+ITexture* CShaderAPI::GetRenderTargetEx(int nRenderTargetID)
+{
+    return ShaderUtil()->GetRenderTargetEx(nRenderTargetID);
+}
+
+void CShaderAPI::SetToneMappingScaleLinear(const Vector& scale)
+{
+}
+
+const Vector& CShaderAPI::GetToneMappingScaleLinear() const
+{
+}
+
+float CShaderAPI::GetLightMapScaleFactor() const
+{
+}
+
+void CShaderAPI::LoadBoneMatrix(int boneIndex, const float* m)
+{
+}
+
+void CShaderAPI::PerspectiveOffCenterX(double fovx, double aspect, double zNear, double zFar, double bottom, double top,
+    double left, double right)
+{
+}
+
+void CShaderAPI::GetDXLevelDefaults(uint& max_dxlevel, uint& recommended_dxlevel)
+{
+}
+
+const FlashlightState_t& CShaderAPI::GetFlashlightStateEx(VMatrix& worldToTexture,
+    ITexture** pFlashlightDepthTexture) const
+{
+}
+
+float CShaderAPI::GetAmbientLightCubeLuminance()
+{
+}
+
+void CShaderAPI::GetDX9LightState(LightState_t* state) const
+{
+}
+
+int CShaderAPI::GetPixelFogCombo()
+{
+}
+
+void CShaderAPI::BindStandardVertexTexture(VertexTextureSampler_t sampler, StandardTextureId_t id)
+{
+}
+
+bool CShaderAPI::IsHWMorphingEnabled() const
+{
+}
+
+void CShaderAPI::GetStandardTextureDimensions(int* pWidth, int* pHeight, StandardTextureId_t id)
+{
+}
+
+void CShaderAPI::SetBooleanVertexShaderConstant(int var, BOOL const* pVec, int numBools, bool bForce)
+{
+}
+
+void CShaderAPI::SetIntegerVertexShaderConstant(int var, int const* pVec, int numIntVecs, bool bForce)
+{
+}
+
+void CShaderAPI::SetBooleanPixelShaderConstant(int var, BOOL const* pVec, int numBools, bool bForce)
+{
+}
+
+void CShaderAPI::SetIntegerPixelShaderConstant(int var, int const* pVec, int numIntVecs, bool bForce)
+{
+}
+
+bool CShaderAPI::ShouldWriteDepthToDestAlpha() const
+{
+}
+
+void CShaderAPI::PushDeformation(DeformationBase_t const* Deformation)
+{
+}
+
+void CShaderAPI::PopDeformation()
+{
+}
+
+int CShaderAPI::GetNumActiveDeformations() const
+{
+}
+
+int CShaderAPI::GetPackedDeformationInformation(int nMaskOfUnderstoodDeformations, float* pConstantValuesOut,
+    int nBufferSize, int nMaximumDeformations, int* pNumDefsOut) const
+{
+}
+
+void CShaderAPI::MarkUnusedVertexFields(unsigned nFlags, int nTexCoordCount, bool* pUnusedTexCoords)
+{
+}
+
+void CShaderAPI::ExecuteCommandBuffer(uint8* pCmdBuffer)
+{
+}
+
+void CShaderAPI::SetStandardTextureHandle(StandardTextureId_t nId, ShaderAPITextureHandle_t nHandle)
+{
+}
+
+void CShaderAPI::GetCurrentColorCorrection(ShaderColorCorrectionInfo_t* pInfo)
+{
+}
+
+void CShaderAPI::SetPSNearAndFarZ(int pshReg)
+{
+}
+
+void CShaderAPI::EnableDebugTextureList(bool bEnable)
+{
+}
+
+void CShaderAPI::EnableGetAllTextures(bool bEnable)
+{
+}
+
+KeyValues* CShaderAPI::GetDebugTextureList()
+{
+}
+
+int CShaderAPI::GetTextureMemoryUsed(TextureMemoryType eTextureMemory)
+{
+}
+
+bool CShaderAPI::IsDebugTextureListFresh(int numFramesAllowed)
+{
+}
+
+bool CShaderAPI::SetDebugTextureRendering(bool bEnable)
+{
+}
+
+
 void CShaderAPI::SetHeightClipMode(MaterialHeightClipMode_t heightClipMode)
 {
 }
@@ -439,14 +805,6 @@ void CShaderAPI::OverrideDepthEnable(bool bEnable, bool bDepthEnable)
 }
 
 void CShaderAPI::SetHeightClipZ(float z)
-{
-}
-
-void CShaderAPI::SetHeightClipMode(MaterialHeightClipMode_t heightClipMode)
-{
-}
-
-void CShaderAPI::SetHeightClipMode(MaterialHeightClipMode_t heightClipMode)
 {
 }
 
