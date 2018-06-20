@@ -40,10 +40,6 @@ $Configuration "Release"
 
 $Project "shaderapivk"
 {
-	$Folder	"Vulkan Header Files"
-	{
-	}
-
 	$Folder	"Public Header Files"
 	{
 		$File	"$SRCDIR\public\shaderapi\ishaderdevice.h"
@@ -56,7 +52,7 @@ $Project "shaderapivk"
 		$File	"$SRCDIR\public\materialsystem\shader_vcs_version.h"
 	}
 
-	$Folder	"Source Code"
+	$Folder	"Source Files"
 	{
 		$Folder "App System"
 		{
@@ -71,8 +67,6 @@ $Project "shaderapivk"
 			$File "shaderdevice.cpp"
 			$File "shaderrender.h"
 			$File "shaderrender.cpp"
-			$File "shaderutil.h"
-			$File "shaderutil.cpp"
 		}
 		$Folder "Vertex / Index Buffer"
 		{
