@@ -2,6 +2,7 @@
 #include "shaderapi_global.h"
 #include "shaderapivk_global.h"
 #include "shaderapi/ishaderutil.h"
+#include "shaderdevice.h"
 
 static CShaderAPI g_ShaderAPIVk;
 CShaderAPI *g_pShaderAPI = &g_ShaderAPIVk;
@@ -209,6 +210,7 @@ ImageFormat CShaderAPI::GetNullTextureFormat(void)
 
 void CShaderAPI::BindVertexTexture(VertexTextureSampler_t nSampler, ShaderAPITextureHandle_t textureHandle)
 {
+
 }
 
 void CShaderAPI::EnableHWMorphing(bool bEnable)

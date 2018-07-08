@@ -2,7 +2,7 @@
 
 #include "shaderapi/IShaderDevice.h"
 
-#include <vulkan/vulkan.h>
+#include "vulkanimpl.h"
 
 struct MyVkAdapterInfo;
 

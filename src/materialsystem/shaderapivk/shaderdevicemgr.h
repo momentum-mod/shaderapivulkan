@@ -157,6 +157,12 @@ public:
 	virtual void RemoveModeChangeCallback(ShaderModeChangeCallbackFunc_t func) override;
 #pragma endregion
 
+    bool CreateVkInstance();
+    bool CreateVkSurface();
+
+    void CleanupVulkan();
+    void DestroyVkSurface();
+
 	VkPhysicalDevice GetAdapter(int nIndex) const;
 
 	void InitAdapterInfo();
@@ -166,8 +172,11 @@ public:
 private:
 	static void* MyCreateInterface(const char* pInterfaceName, int* pReturnCode);
 
+    void *m_hWnd;
+
 	ShaderDeviceInfo_t m_Mode;
 	VkInstance m_hInstance;
+    VkSurfaceKHR m_hSurface;
 	CUtlVector<MyVkAdapterInfo> m_Adapters;
 };
 
