@@ -99,7 +99,7 @@ bool CShaderDeviceMgr::Connect(CreateInterfaceFn factory)
 
     if (!g_pShaderUtil || !g_pFullFileSystem || !g_pShaderDeviceMgr)
     {
-        Warning("ShaderAPIDx10 was unable to access the required interfaces!\n");
+        Warning("ShaderAPIVk was unable to access the required interfaces!\n");
         return false;
     }
 

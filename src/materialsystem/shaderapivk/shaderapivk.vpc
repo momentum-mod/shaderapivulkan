@@ -61,7 +61,7 @@ $Project "shaderapivk"
  		}
 		$Folder "Device / Renderer"
 		{
-            $File "shaderapivk_global.h"
+            		$File "shaderapivk_global.h"
 			$File "shaderapivk.h"
 			$File "shaderapivk.cpp"
 			$File "shaderdevice.h"
@@ -69,8 +69,10 @@ $Project "shaderapivk"
 			$File "shaderrender.h"
 			$File "shaderrender.cpp"
 		}
-		$Folder "Vertex / Index Buffer"
+		$Folder "MeshBuffer"
 		{
+			$File "meshimpl.h"
+			$File "meshimpl.cpp"
 			$File "vertexbufferimpl.h"
 			$File "vertexbufferimpl.cpp"
 			$File "indexbufferimpl.h"
