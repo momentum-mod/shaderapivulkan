@@ -1,8 +1,8 @@
 #include "shaderdevicemgr.h"
-#include "shaderdevice.h"
 #include "shaderapivk.h"
 #include <tier2/tier2.h>
 #include "shaderapi/ishaderutil.h"
+#include "shaderdevice.h"
 
 
 //-----------------------------------------------------------------------------
@@ -108,43 +108,13 @@ bool CShaderDeviceMgr::Connect(CreateInterfaceFn factory)
 
 
     // Initialize Vulkan
-	uint32_t count;
-	vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr); //get number of extensions
-	CUtlVector<VkExtensionProperties> fextensions(count, count);
-	vkEnumerateInstanceExtensionProperties(nullptr, &count, fextensions.begin()); //populate buffer
-	CUtlVector<const char*> extensions;
-	for (auto & extension : fextensions) {
-		extensions.AddToTail(extension.extensionName);
-	}
-
-	VkApplicationInfo appInfo =
-	{
-		VK_STRUCTURE_TYPE_APPLICATION_INFO,
-		nullptr,
-		"shaderapivulkan",
-		VK_MAKE_VERSION(0,0,1),
-		"Source Engine",
-		VK_MAKE_VERSION(1,0,0)
-	};
-
-	VkInstanceCreateInfo instanceCreateInfo =
-	{
-		VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-		nullptr,
-		0,
-		&appInfo, 
-		0,
-		nullptr,
-		count,
-		extensions.begin()
-	};
-	
-	return vkCreateInstance(&instanceCreateInfo, g_pAllocCallbacks, &m_hInstance) == VK_SUCCESS;
+    bool bInstance = CreateVkInstance();
+	return bInstance;
 }
 
 void CShaderDeviceMgr::Disconnect()
 {
-	vkDestroyInstance(m_hInstance, g_pAllocCallbacks);
+    CleanupVulkan();
 }
 
 void * CShaderDeviceMgr::QueryInterface(const char * pInterfaceName)
@@ -166,7 +136,6 @@ void CShaderDeviceMgr::Shutdown()
 	if (g_pShaderDevice)
 	{
 		g_pShaderDevice->ShutdownDevice();
-		g_pShaderDevice = nullptr;
 	}
 }
 
@@ -205,7 +174,7 @@ void CShaderDeviceMgr::GetCurrentModeInfo(ShaderDisplayMode_t * pInfo, int nAdap
 
 bool CShaderDeviceMgr::SetAdapter(int nAdapter, int nFlags)
 {
-	//deprecated
+	// Not deprecated, this is the first thing called by material system
 	return true;
 }
 
@@ -216,7 +185,16 @@ CreateInterfaceFn CShaderDeviceMgr::SetMode(void * hWnd, int nAdapter, const Sha
 		g_pShaderDevice->ShutdownDevice();
 	}
 
-	g_pShaderDevice->InitDevice(hWnd, m_Adapters[nAdapter], mode);
+    if (m_hSurface != VK_NULL_HANDLE)
+    {
+        DestroyVkSurface();
+    }
+
+    m_hWnd = hWnd;
+
+    bool bSurface = CreateVkSurface();
+
+	g_pShaderDevice->InitDevice(m_hWnd, m_Adapters[nAdapter], mode);
 
 	m_Mode = mode;
 
@@ -229,6 +207,133 @@ void CShaderDeviceMgr::AddModeChangeCallback(ShaderModeChangeCallbackFunc_t func
 
 void CShaderDeviceMgr::RemoveModeChangeCallback(ShaderModeChangeCallbackFunc_t func)
 {
+}
+
+bool CShaderDeviceMgr::CreateVkInstance()
+{
+    uint32_t count;
+    vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr); //get number of extensions
+    CUtlVector<VkExtensionProperties> fextensions(count, count);
+    vkEnumerateInstanceExtensionProperties(nullptr, &count, fextensions.begin()); //populate buffer
+    CUtlVector<const char*> extensions;
+    for (auto & extension : fextensions)
+    {
+        extensions.AddToTail(extension.extensionName);
+    }
+
+    VkApplicationInfo appInfo =
+    {
+        VK_STRUCTURE_TYPE_APPLICATION_INFO,
+        nullptr,
+        "shaderapivulkan",
+        VK_MAKE_VERSION(0,0,1),
+        "Source Engine",
+        VK_MAKE_VERSION(1,0,0)
+    };
+
+    VkInstanceCreateInfo instanceCreateInfo =
+    {
+        VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
+        nullptr,
+        0,
+        &appInfo,
+        0,
+        nullptr,
+        count,
+        extensions.begin()
+    };
+
+    return vkCreateInstance(&instanceCreateInfo, g_pAllocCallbacks, &m_hInstance) == VK_SUCCESS;
+}
+
+bool CShaderDeviceMgr::CreateVkSurface()
+{
+    // MOM_TODO: Make this platform dependent
+    VkWin32SurfaceCreateInfoKHR createInfo = {VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR};
+    createInfo.hwnd = (HWND) m_hWnd;
+    // GetModuleHandle should be platform independent (defined in interface.h) on Linux/mac
+    createInfo.hinstance = GetModuleHandle(nullptr);
+
+    return vkCreateWin32SurfaceKHR(m_hInstance, &createInfo, g_pAllocCallbacks, &m_hSurface) == VK_SUCCESS;
+}
+
+void CShaderDeviceMgr::CleanupVulkan()
+{
+
+    /*for (int i = 0; i < NUM_FRAME_DATA; ++i)
+    {
+        idImage::EmptyGarbage();
+    }
+
+    // Detroy Frame Buffers
+    DestroyFrameBuffers();
+
+    // Destroy Pipeline Cache
+    vkDestroyPipelineCache(vkcontext.device, vkcontext.pipelineCache, NULL);
+
+    // Destroy Render Pass
+    vkDestroyRenderPass(vkcontext.device, vkcontext.renderPass, NULL);
+
+    // Destroy Render Targets
+    DestroyRenderTargets();
+
+    // Destroy Swap Chain
+    DestroySwapChain();
+
+    // Stop the Staging Manager
+    stagingManager.Shutdown();
+
+    // Destroy Command Buffer
+    vkFreeCommandBuffers(vkcontext.device, m_commandPool, NUM_FRAME_DATA, m_commandBuffers.Ptr());
+    for (int i = 0; i < NUM_FRAME_DATA; ++i)
+    {
+        vkDestroyFence(vkcontext.device, m_commandBufferFences[i], NULL);
+    }
+
+    // Destroy Command Pool
+    vkDestroyCommandPool(vkcontext.device, m_commandPool, NULL);
+
+    // Destroy Query Pools
+    for (int i = 0; i < NUM_FRAME_DATA; ++i)
+    {
+        vkDestroyQueryPool(vkcontext.device, m_queryPools[i], NULL);
+    }
+
+    // Destroy Semaphores
+    for (int i = 0; i < NUM_FRAME_DATA; ++i)
+    {
+        vkDestroySemaphore(vkcontext.device, m_acquireSemaphores[i], NULL);
+        vkDestroySemaphore(vkcontext.device, m_renderCompleteSemaphores[i], NULL);
+    }
+
+    // Destroy Debug Callback
+    if (r_vkEnableValidationLayers.GetBool())
+    {
+        DestroyDebugReportCallback(m_instance);
+    }
+
+    // Dump all our memory
+#if defined( ID_USE_AMD_ALLOCATOR )
+    vmaDestroyAllocator(vmaAllocator);
+#else
+    vulkanAllocator.Shutdown();
+#endif*/
+
+    // Destroy Logical Device
+    //vkDestroyDevice(g_p, NULL);
+    if (g_pShaderDevice)
+        g_pShaderDevice->ShutdownDevice();
+
+    // Destroy Surface
+    DestroyVkSurface();
+
+    // Destroy the Instance
+    vkDestroyInstance(m_hInstance, g_pAllocCallbacks);
+}
+
+void CShaderDeviceMgr::DestroyVkSurface()
+{
+    vkDestroySurfaceKHR(m_hInstance, m_hSurface, g_pAllocCallbacks);
 }
 
 VkPhysicalDevice CShaderDeviceMgr::GetAdapter(int nIndex) const

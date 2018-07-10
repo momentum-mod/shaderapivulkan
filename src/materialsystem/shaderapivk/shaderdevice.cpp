@@ -44,8 +44,9 @@ void CShaderDevice::InitDevice(void* hWnd, MyVkAdapterInfo& adapterInfo, const S
     VkPhysicalDeviceFeatures features;
     vkGetPhysicalDeviceFeatures(adapterInfo.device, &features);
 
-    float queuePriority = 1.f;
-    VkDeviceQueueCreateInfo queueCreateInfo =
+    float queuePriority = 1.0f;
+    VkDeviceQueueCreateInfo queueCreateInfo = //{VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO};
+    
     {
         VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
         nullptr,
@@ -75,6 +76,8 @@ void CShaderDevice::InitDevice(void* hWnd, MyVkAdapterInfo& adapterInfo, const S
     {
 
     }
+
+    
 
     vkGetDeviceQueue(m_Device, 0, 0, &m_Queue);
 }
