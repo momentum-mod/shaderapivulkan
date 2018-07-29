@@ -70,7 +70,9 @@ void *ShaderDeviceFactory(const char *pName, int *pReturnCode)
     return nullptr;
 }
 
-
+//-----------------------------------------------------------------------------
+// CShaderDeviceMgr implemention
+//-----------------------------------------------------------------------------
 CShaderDeviceMgr::CShaderDeviceMgr()
 {
     m_hInstance = VK_NULL_HANDLE;
@@ -108,8 +110,8 @@ bool CShaderDeviceMgr::Connect(CreateInterfaceFn factory)
 
 
     // Initialize Vulkan
-    bool bInstance = CreateVkInstance();
-	return bInstance;
+    CreateVkInstance();
+	return true;
 }
 
 void CShaderDeviceMgr::Disconnect()
@@ -134,9 +136,7 @@ InitReturnVal_t CShaderDeviceMgr::Init()
 void CShaderDeviceMgr::Shutdown()
 {
 	if (g_pShaderDevice)
-	{
 		g_pShaderDevice->ShutdownDevice();
-	}
 }
 
 int CShaderDeviceMgr::GetAdapterCount() const
@@ -157,24 +157,22 @@ bool CShaderDeviceMgr::GetRecommendedConfigurationInfo(int nAdapter, int nDXLeve
 
 int CShaderDeviceMgr::GetModeCount(int nAdapter) const
 {
-	auto adapter = m_Adapters[nAdapter];
-	return 0;
+	return 1;
 }
 
 void CShaderDeviceMgr::GetModeInfo(ShaderDisplayMode_t * pInfo, int nAdapter, int nMode) const
 {
+	*pInfo = m_Adapters[nAdapter].shaderMode;
 }
 
 void CShaderDeviceMgr::GetCurrentModeInfo(ShaderDisplayMode_t * pInfo, int nAdapter) const
 {
-	VkPhysicalDevice device = m_Adapters[nAdapter].device;
-
-
+	*pInfo = m_Adapters[nAdapter].shaderMode;
 }
 
 bool CShaderDeviceMgr::SetAdapter(int nAdapter, int nFlags)
 {
-	// Not deprecated, this is the first thing called by material system
+	m_nCurAdapter = nAdapter;
 	return true;
 }
 
@@ -192,9 +190,9 @@ CreateInterfaceFn CShaderDeviceMgr::SetMode(void * hWnd, int nAdapter, const Sha
 
     m_hWnd = hWnd;
 
-    bool bSurface = CreateVkSurface();
+    CreateVkSurface();
 
-	g_pShaderDevice->InitDevice(m_hWnd, m_Adapters[nAdapter], mode);
+	g_pShaderDevice->InitDevice(m_hSurface, m_Adapters[nAdapter], mode);
 
 	m_Mode = mode;
 
@@ -209,7 +207,7 @@ void CShaderDeviceMgr::RemoveModeChangeCallback(ShaderModeChangeCallbackFunc_t f
 {
 }
 
-bool CShaderDeviceMgr::CreateVkInstance()
+void CShaderDeviceMgr::CreateVkInstance()
 {
     uint32_t count;
     vkEnumerateInstanceExtensionProperties(nullptr, &count, nullptr); //get number of extensions
@@ -217,10 +215,8 @@ bool CShaderDeviceMgr::CreateVkInstance()
     vkEnumerateInstanceExtensionProperties(nullptr, &count, fextensions.begin()); //populate buffer
     CUtlVector<const char*> extensions;
     for (auto & extension : fextensions)
-    {
         extensions.AddToTail(extension.extensionName);
-    }
-
+  
     VkApplicationInfo appInfo =
     {
         VK_STRUCTURE_TYPE_APPLICATION_INFO,
@@ -243,10 +239,10 @@ bool CShaderDeviceMgr::CreateVkInstance()
         extensions.begin()
     };
 
-    return vkCreateInstance(&instanceCreateInfo, g_pAllocCallbacks, &m_hInstance) == VK_SUCCESS;
+    vkCheck(vkCreateInstance(&instanceCreateInfo, g_pAllocCallbacks, &m_hInstance));
 }
 
-bool CShaderDeviceMgr::CreateVkSurface()
+void CShaderDeviceMgr::CreateVkSurface()
 {
     // MOM_TODO: Make this platform dependent
     VkWin32SurfaceCreateInfoKHR createInfo = {VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR};
@@ -254,7 +250,7 @@ bool CShaderDeviceMgr::CreateVkSurface()
     // GetModuleHandle should be platform independent (defined in interface.h) on Linux/mac
     createInfo.hinstance = GetModuleHandle(nullptr);
 
-    return vkCreateWin32SurfaceKHR(m_hInstance, &createInfo, g_pAllocCallbacks, &m_hSurface) == VK_SUCCESS;
+	vkCheck(vkCreateWin32SurfaceKHR(m_hInstance, &createInfo, g_pAllocCallbacks, &m_hSurface));
 }
 
 void CShaderDeviceMgr::CleanupVulkan()
@@ -346,13 +342,13 @@ void CShaderDeviceMgr::InitAdapterInfo()
 	m_Adapters.RemoveAll();
 
 	uint32_t count = 0;
-	vkEnumeratePhysicalDevices(m_hInstance, &count, nullptr);
+	vkCheck(vkEnumeratePhysicalDevices(m_hInstance, &count, nullptr));
 	CUtlVector<VkPhysicalDevice> devices(count, count);
-	vkEnumeratePhysicalDevices(m_hInstance, &count, devices.begin());
-
-	VkPhysicalDeviceProperties properties;
+	vkCheck(vkEnumeratePhysicalDevices(m_hInstance, &count, devices.begin()));
 
 	m_Adapters.SetSize(count);
+
+	CUtlVector<VkFormatProperties> formatProperties;
 
 	for (int i = 0; i < count; i++)
 	{
@@ -371,6 +367,12 @@ void CShaderDeviceMgr::InitAdapterInfo()
 		strcpy(adapter.matdata.m_pDriverName, "(not retrieved)");
 		adapter.matdata.m_SubSysID = -1;
 
+		adapter.shaderMode.m_nWidth = adapter.props.limits.maxFramebufferWidth;
+		adapter.shaderMode.m_nHeight = adapter.props.limits.maxFramebufferHeight;
+		adapter.shaderMode.m_Format = ImageFormat::IMAGE_FORMAT_UNKNOWN;
+		adapter.shaderMode.m_nRefreshRateNumerator = 1;
+		adapter.shaderMode.m_nRefreshRateDenominator = 0;
+		adapter.shaderMode.m_nVersion = 1;
 	}
 
 }

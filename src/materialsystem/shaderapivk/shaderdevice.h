@@ -8,11 +8,13 @@ struct MyVkAdapterInfo;
 
 class CShaderDevice : public IShaderDevice
 {
+	ImageFormat _backBufferFormat;
+	int _backBufferSize[2];
 public:
     CShaderDevice();
 	~CShaderDevice();
 
-    void InitDevice(void *hWnd, MyVkAdapterInfo &adapterInfo, const ShaderDeviceInfo_t &creationInfo);
+    void InitDevice(VkSurfaceKHR surface, MyVkAdapterInfo &adapterInfo, const ShaderDeviceInfo_t &creationInfo);
 
 	// Releases/reloads resources when other apps want some memory
 	virtual void ReleaseResources() override;

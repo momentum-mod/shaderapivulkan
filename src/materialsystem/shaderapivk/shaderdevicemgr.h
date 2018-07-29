@@ -102,6 +102,7 @@ struct MyVkAdapterInfo
 	VkPhysicalDeviceProperties props;
 	MyHardwareCaps caps;
 	VkPhysicalDevice device;
+	ShaderDisplayMode_t shaderMode;
 };
 
 class CShaderDeviceMgr : public IShaderDeviceMgr
@@ -157,8 +158,8 @@ public:
 	virtual void RemoveModeChangeCallback(ShaderModeChangeCallbackFunc_t func) override;
 #pragma endregion
 
-    bool CreateVkInstance();
-    bool CreateVkSurface();
+    void CreateVkInstance();
+    void CreateVkSurface();
 
     void CleanupVulkan();
     void DestroyVkSurface();
@@ -173,6 +174,8 @@ private:
 	static void* MyCreateInterface(const char* pInterfaceName, int* pReturnCode);
 
     void *m_hWnd;
+
+	int m_nCurAdapter;
 
 	ShaderDeviceInfo_t m_Mode;
 	VkInstance m_hInstance;

@@ -36,7 +36,7 @@ CShaderDevice::~CShaderDevice()
 {
 }
 
-void CShaderDevice::InitDevice(void* hWnd, MyVkAdapterInfo& adapterInfo, const ShaderDeviceInfo_t& creationInfo)
+void CShaderDevice::InitDevice(VkSurfaceKHR surface, MyVkAdapterInfo& adapterInfo, const ShaderDeviceInfo_t& creationInfo)
 {
     int queueFamily;
     GetQueueFamily(queueFamily, adapterInfo.device);
@@ -92,11 +92,13 @@ void CShaderDevice::ReacquireResources()
 
 ImageFormat CShaderDevice::GetBackBufferFormat() const
 {
-	return ImageFormat();
+	return _backBufferFormat;
 }
 
 void CShaderDevice::GetBackBufferDimensions(int & width, int & height) const
 {
+	width = _backBufferSize[0];
+	height = _backBufferSize[1];
 }
 
 int CShaderDevice::GetCurrentAdapter() const
